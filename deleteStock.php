@@ -1,0 +1,31 @@
+<?php
+include './config/config.php';
+
+// Vérifier la connexion
+if (!$conn) {
+    die("Erreur de connexion à la base de données : " . mysqli_connect_error());
+}
+
+// Vérifier si l'ID du stock est passé en paramètre
+if (isset($_GET['id'])) {
+    $idstock = $_GET['id'];
+
+    // Requête SQL pour supprimer le stock
+    $sql = "DELETE FROM stock WHERE idstock = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "i", $idstock);
+
+    if (mysqli_stmt_execute($stmt)) {
+        // Redirection après suppression
+        header("Location: listStock.php?success=Stock supprimé avec succès");
+        exit();
+    } else {
+        echo "<div class='alert alert-danger'>Erreur lors de la suppression du stock.</div>";
+    }
+} else {
+    echo "<div class='alert alert-warning'>Aucun stock sélectionné.</div>";
+}
+
+// Fermer la connexion
+mysqli_close($conn);
+?>
